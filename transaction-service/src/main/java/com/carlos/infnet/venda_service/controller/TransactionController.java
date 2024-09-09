@@ -14,11 +14,9 @@ import com.carlos.infnet.venda_service.service.TaxService;
 import com.carlos.infnet.venda_service.service.TransactionService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/transaction")
-@Slf4j
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
@@ -26,7 +24,7 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Transaction transaction) {
-        BigDecimal totalImposto = taxService.getTaxByItems(transaction).totalImposto();
+        BigDecimal totalImposto = taxService.getTaxByItems(transaction).imposto();
         BigDecimal valorSemImposto = transactionService.calcularValorTotal(transaction);
         transaction.setTotalTaxcost(totalImposto);
         transaction.setTotalCost(valorSemImposto);
