@@ -1,0 +1,114 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+  mongo:
+    image: mongo:7-jammy
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./transaction-service/docker/mongodb-data:/data/db
+    networks:
+      - microservice-network
+
+  mongo-express:
+    image: mongo-express
+    links:
+      - mongo
+    ports:
+      - "8099:8081"
+    container_name: "mongo-express"
+    networks:
+      - microservice-network
+
+  eureka-service:
+    image: eureka-service:latest
+    container_name: eureka-service
+    build:
+      context: ./eureka-service
+    ports:
+      - "8761:8761"
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  client-service:
+    image: client-service:latest
+    container_name: client-service
+    build:
+      context: ./client-service
+    ports:
+      - "8081:8081"
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
+    depends_on:
+      - eureka-service
+
+  product-service:
+    image: product-service:latest
+    container_name: product-service
+    build:
+      context: ./product-service
+    ports:
+      - "8082:8082"
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
+    depends_on:
+      - eureka-service
+
+  transaction-service:
+    image: transaction-service:latest
+    container_name: transaction-service
+    build:
+      context: ./transaction-service
+    ports:
+      - "8083:8083"
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/transactiondb
+    depends_on:
+      - eureka-service
+      - mongo
+
+  vatrate:
+    image: vatrate:latest
+    container_name: vatrate
+    build:
+      context: ./vatrate
+    ports:
+      - "8084:8084"
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
+    depends_on:
+      - eureka-service
+
+networks:
+  microservice-network:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_log:
+  mongodb_data:
