@@ -16,7 +16,7 @@ import com.carlos.infnet.client_service.model.Client;
 import com.carlos.infnet.client_service.service.ClientService;
 
 @RestController
-@RequestMapping("/clients")
+@RequestMapping("/")
 @Tag(name = "Client API", description = "API para gerenciar clientes")
 public class ClientController {
 

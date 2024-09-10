@@ -5,19 +5,43 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: product-service
+        - id: product
           uri: lb://PRODUCT-SERVICE
           predicates:
-            - Path=/products/**
+            - Path=/product/**
+
+        - id: category
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/category/**
+
+        - id: client
+          uri: lb://CLIENT-SERVICE
+          predicates:
+            - Path=/client/**
           filters:
             - StripPrefix=1
 
-eureka:
+        - id: transaction
+          uri: lb://TRANSACTION-SERVICE
+          predicates:
+            - Path=/transaction/**
+          filters:
+            - StripPrefix=1
+
+        - id: vatrate
+          uri: lb://VATRATE
+          predicates:
+            - Path=/vatrate/**
+          filters:
+            - StripPrefix=1
+
+  eureka:
     client:
-        service-url:
-            defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+      service-url:
+        defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
     instance:
-        instance-id: ${spring.application.name}:${random.value}
+      instance-id: ${spring.application.name}:${random.value}
 
 server:
   port: 8089
