@@ -26,8 +26,6 @@ spring:
           uri: lb://TRANSACTION-SERVICE
           predicates:
             - Path=/transaction/**
-          filters:
-            - StripPrefix=1
 
         - id: vatrate
           uri: lb://VATRATE
