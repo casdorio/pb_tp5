@@ -4,6 +4,4 @@ WORKDIR /app
 
 COPY target/venda-service-0.0.1-SNAPSHOT.jar venda-service.jar
 
-EXPOSE 8084
-
 ENTRYPOINT ["java", "-jar", "venda-service.jar"]
