@@ -12,6 +12,7 @@ import com.carlos.infnet.venda_service.model.Transaction;
 import com.carlos.infnet.venda_service.service.TaxService;
 
 import com.carlos.infnet.venda_service.service.TransactionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +31,13 @@ public class TransactionController {
         transaction.setTotalCost(valorSemImposto);
         transaction.setTotalCostEndTax(valorSemImposto.add(totalImposto));
         Transaction saved = transactionService.create(transaction);
+
+        try {
+            transactionService.send(transaction);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         return ResponseEntity.ok(Map.of("transaction", saved));
     }
 }

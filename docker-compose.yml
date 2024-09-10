@@ -95,9 +95,12 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/transactiondb
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
     depends_on:
       - eureka-service
       - mongo
+      - rabbitmq
 
   vatrate:
     image: vatrate:latest
