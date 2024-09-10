@@ -15,10 +15,12 @@ import com.carlos.infnet.venda_service.service.TransactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/transaction")
 @RequiredArgsConstructor
+@Slf4j
 public class TransactionController {
     private final TransactionService transactionService;
     private final TaxService taxService;
@@ -32,6 +34,7 @@ public class TransactionController {
         transaction.setTotalCostEndTax(valorSemImposto.add(totalImposto));
         Transaction saved = transactionService.create(transaction);
 
+        log.info("Transaction created: {}", saved);
         try {
             transactionService.send(transaction);
         } catch (JsonProcessingException e) {

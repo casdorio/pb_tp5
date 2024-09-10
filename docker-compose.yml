@@ -11,6 +11,9 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       - rabbitmq_log:/var/log/rabbitmq
+    networks:
+      - microservice-network
+
   mongo:
     image: mongo:7-jammy
     ports:
