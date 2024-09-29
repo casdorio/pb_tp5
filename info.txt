@@ -1,8 +1,0 @@
-Mongo: http://localhost:8099/
-Eureka: http://localhost:8761/
-
-
-Client: http://localhost:8081/
-product: http://localhost:8082/
-transation: http://localhost:8083/
-vatrate: http://localhost:8084/

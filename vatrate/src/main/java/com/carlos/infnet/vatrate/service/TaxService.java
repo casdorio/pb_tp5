@@ -12,22 +12,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TaxService {
 
-    private final ProductService productService;
 
     public BigDecimal calcularTaxTotal(TransactionPayload transactionPayload){
         return transactionPayload.items().stream()
                 .map(this::calcularTax)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-    private BigDecimal calcularTax(ItemTransaction itemTransaction){
-        Product product = productService.getProductById(itemTransaction.getProductId());
-        String countryString = product.getCountry().toUpperCase();
-        Country country = Country.valueOf(countryString);
-        BigDecimal taxa = getTax(country);
-        return product.getPrice()
-            .multiply(taxa)
-            .multiply(new BigDecimal(itemTransaction.getQuantity()));
 
+    private BigDecimal calcularTax(ItemTransaction itemTransaction) {       
+        BigDecimal taxa = getTax(itemTransaction.getCountry());
+        return itemTransaction.getPrice()
+                .multiply(taxa)
+                .multiply(new BigDecimal(itemTransaction.getQuantity()));
     }
 
     private BigDecimal getTax(Country country) {

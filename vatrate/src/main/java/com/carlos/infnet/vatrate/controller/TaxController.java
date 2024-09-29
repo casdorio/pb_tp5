@@ -25,7 +25,9 @@ public class TaxController {
 
     @PostMapping
     public ResponseEntity<?> calcTax(@RequestBody TransactionPayload transactionPayload) {    
+        
         BigDecimal impostoTotal = taxService.calcularTaxTotal(transactionPayload);
+
         return ResponseEntity.ok(Map.of("imposto", impostoTotal));
     }
     

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.carlos.infnet.venda_service.model.ItemTransaction;
 import com.carlos.infnet.venda_service.model.Product;
 import com.carlos.infnet.venda_service.model.Transaction;
-import com.carlos.infnet.venda_service.rabbitmq.EmailProducer;
+import com.carlos.infnet.venda_service.rabbitmq.NotificationProducer;
 import com.carlos.infnet.venda_service.repository.TransactionRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -17,11 +17,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
-    private final ProductService productService;
-    private final EmailProducer emailProducer;
+    private final NotificationProducer notificationProducer;
 
     public void send(Transaction transaction) throws JsonProcessingException {
-        emailProducer.send(transaction);
+        notificationProducer.sendNotification(transaction);
     }
     
     public Transaction create(Transaction transaction) {
@@ -34,9 +33,7 @@ public class TransactionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private BigDecimal calcularValorDeItem(ItemTransaction item){
-        Product product = productService.getProductById(item.getProductId());
-        return product.getPrice().multiply(new BigDecimal(item.getQuantity()));
+    private BigDecimal calcularValorDeItem(ItemTransaction item) {
+        return item.getPrice().multiply(new BigDecimal(item.getQuantity()));
     }
-
 }

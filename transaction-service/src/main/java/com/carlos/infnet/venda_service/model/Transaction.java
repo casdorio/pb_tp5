@@ -11,8 +11,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,4 +25,5 @@ public class Transaction {
     private BigDecimal totalTaxcost;
     private BigDecimal totalCost;
     private BigDecimal totalCostEndTax;
+    private String statusNotification;
 }

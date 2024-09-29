@@ -9,14 +9,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
+
 @Service
 @RequiredArgsConstructor
-public class EmailProducer {
+public class NotificationProducer {
 
     private final AmqpTemplate amqpTemplate;
     private final ObjectMapper objectMapper;
-    public void send(Transaction transaction) throws JsonProcessingException {
+
+    public void sendNotification(Transaction transaction) throws JsonProcessingException {
         String message = objectMapper.writeValueAsString(transaction);
-        amqpTemplate.convertAndSend("email-exc","email-rk", message);
+        amqpTemplate.convertAndSend("notification-exc", "email-rk", message);
+        amqpTemplate.convertAndSend("notification-exc", "sms-rk", message);
+        amqpTemplate.convertAndSend("notification-exc", "report-rk", message);
     }
+
 }
+

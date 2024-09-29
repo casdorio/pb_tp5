@@ -55,12 +55,5 @@ public class CategoryController {
         return categoryService.findById(id);
     }
 
-    // @GetMapping("/category/{id}/products")
-    // @Operation(summary = "Listar produtos por categoria", description = "Retorna uma lista de produtos relacionados a uma categoria específica")
-    // @ApiResponse(responseCode = "200", description = "Produtos da categoria retornados com sucesso")
-    // @ApiResponse(responseCode = "404", description = "Categoria não encontrada")
-    // public List<Product> getProductsByCategory(
-    //     @PathVariable @Parameter(description = "ID da categoria cujos produtos devem ser retornados") Long categoryId) {
-    //     return categoryService.findProductsByCategory(categoryId);
-    // }
+
 }
