@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.carlos.infnet.venda_service.model.Product;
 import com.carlos.infnet.venda_service.model.Transaction;
+import com.carlos.infnet.venda_service.service.NotificationService;
 import com.carlos.infnet.venda_service.service.ProductService;
 import com.carlos.infnet.venda_service.service.TaxService;
 
@@ -19,6 +20,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/transaction")
@@ -27,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final NotificationService notificationService;
     private final ProductService productService;
     private final TaxService taxService;
 
@@ -47,17 +52,26 @@ public class TransactionController {
             .totalTaxcost(totalImposto)
             .totalCost(valorSemImposto)
             .totalCostEndTax(valorSemImposto.add(totalImposto))
-            .statusNotification("processando")
+            .statusNotification("NOVA")
             .build();
         
-        Transaction saved = transactionService.create(newTransaction);
-
+        newTransaction.addStatusChange(newTransaction.getStatusNotification());
+        Transaction saved = transactionService.save(newTransaction);
         try {
-            transactionService.send(transaction);
+            notificationService.send(saved);
+            saved.setStatusNotification("PROCESSANDO");
+            saved.addStatusChange(saved.getStatusNotification());
+            transactionService.save(saved);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error sending transaction", e);
         }
 
         return ResponseEntity.ok(Map.of("transaction", saved));
     }
+
+    @GetMapping("/{transactionId}")
+    public ResponseEntity<?> getTransactionById(@PathVariable String transactionId) {
+        return ResponseEntity.ok(transactionService.getTransactionById(transactionId));
+    }
+    
 }

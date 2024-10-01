@@ -31,6 +31,16 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue retryQueue() {
+        return new Queue("retry-queue", true);
+    }
+
+    @Bean
+    public Queue errorQueue() {
+        return new Queue("error-queue", true);
+    }
+
+    @Bean
     public Binding emailBinding(Queue emailQueue, TopicExchange notificationExchange) {
         return BindingBuilder.bind(emailQueue).to(notificationExchange).with("email-rk");
     }
@@ -43,5 +53,15 @@ public class RabbitMQConfig {
     @Bean
     public Binding reportBinding(Queue reportQueue, TopicExchange notificationExchange) {
         return BindingBuilder.bind(reportQueue).to(notificationExchange).with("report-rk");
+    }
+
+    @Bean
+    public Binding retryBinding(Queue retryQueue, TopicExchange notificationExchange) {
+        return BindingBuilder.bind(retryQueue).to(notificationExchange).with("retry-rk");
+    }
+
+    @Bean
+    public Binding errorBinding(Queue errorQueue, TopicExchange notificationExchange) {
+        return BindingBuilder.bind(errorQueue).to(notificationExchange).with("error-rk");
     }
 }

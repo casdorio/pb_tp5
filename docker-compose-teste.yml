@@ -1,0 +1,88 @@
+services:
+  eureka-service:
+    image: eureka-service:latest
+    container_name: eureka-service
+    build:
+      context: ./eureka-service
+    ports:
+      - "8761:8761"
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  gateway:
+    image: gateway:latest
+    container_name: gateway
+    build:
+      context: ./gateway
+    ports:
+      - "8089:8089"
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
+    depends_on:
+      - eureka-service
+
+
+  client-service:
+    image: client-service:latest
+    container_name: client-service
+    build:
+      context: ./client-service
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
+    depends_on:
+      - eureka-service
+
+  product-service:
+    image: product-service:latest
+    container_name: product-service
+    build:
+      context: ./product-service
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
+    depends_on:
+      - eureka-service
+
+  transaction-service:
+    image: transaction-service:latest
+    container_name: transaction-service
+    build:
+      context: ./transaction-service
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
+      - SPRING_DATA_MONGODB_URI=mongodb://192.168.15.138:27017/transactiondb
+      - SPRING_RABBITMQ_HOST=192.168.15.138
+      - SPRING_RABBITMQ_PORT=5672
+    depends_on:
+      - eureka-service
+
+  vatrate:
+    image: vatrate:latest
+    container_name: vatrate
+    build:
+      context: ./vatrate
+    networks:
+      - microservice-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_SERVER_URL=http://eureka-service:8761/eureka
+    depends_on:
+      - eureka-service
+
+networks:
+  microservice-network:
+    driver: bridge
+
